@@ -35,6 +35,15 @@ public partial class @InputPlayer: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Look"",
+                    ""type"": ""Value"",
+                    ""id"": ""05ed054a-6256-4f4b-a418-c2af20f9b26f"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -92,6 +101,39 @@ public partial class @InputPlayer: IInputActionCollection2, IDisposable
                     ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8826e3a7-767f-47e8-b1ad-db31c7efcf4f"",
+                    ""path"": ""<Gamepad>/rightStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""06128591-fd0d-4164-8d58-8e28f646773f"",
+                    ""path"": ""<Pointer>/delta"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3068a6a2-b9ef-4916-96c6-ec4d98994fc6"",
+                    ""path"": ""<Joystick>/{Hatswitch}"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -101,6 +143,7 @@ public partial class @InputPlayer: IInputActionCollection2, IDisposable
         // OnFoot
         m_OnFoot = asset.FindActionMap("OnFoot", throwIfNotFound: true);
         m_OnFoot_Movement = m_OnFoot.FindAction("Movement", throwIfNotFound: true);
+        m_OnFoot_Look = m_OnFoot.FindAction("Look", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -163,11 +206,13 @@ public partial class @InputPlayer: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_OnFoot;
     private List<IOnFootActions> m_OnFootActionsCallbackInterfaces = new List<IOnFootActions>();
     private readonly InputAction m_OnFoot_Movement;
+    private readonly InputAction m_OnFoot_Look;
     public struct OnFootActions
     {
         private @InputPlayer m_Wrapper;
         public OnFootActions(@InputPlayer wrapper) { m_Wrapper = wrapper; }
         public InputAction @Movement => m_Wrapper.m_OnFoot_Movement;
+        public InputAction @Look => m_Wrapper.m_OnFoot_Look;
         public InputActionMap Get() { return m_Wrapper.m_OnFoot; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -180,6 +225,9 @@ public partial class @InputPlayer: IInputActionCollection2, IDisposable
             @Movement.started += instance.OnMovement;
             @Movement.performed += instance.OnMovement;
             @Movement.canceled += instance.OnMovement;
+            @Look.started += instance.OnLook;
+            @Look.performed += instance.OnLook;
+            @Look.canceled += instance.OnLook;
         }
 
         private void UnregisterCallbacks(IOnFootActions instance)
@@ -187,6 +235,9 @@ public partial class @InputPlayer: IInputActionCollection2, IDisposable
             @Movement.started -= instance.OnMovement;
             @Movement.performed -= instance.OnMovement;
             @Movement.canceled -= instance.OnMovement;
+            @Look.started -= instance.OnLook;
+            @Look.performed -= instance.OnLook;
+            @Look.canceled -= instance.OnLook;
         }
 
         public void RemoveCallbacks(IOnFootActions instance)
@@ -207,5 +258,6 @@ public partial class @InputPlayer: IInputActionCollection2, IDisposable
     public interface IOnFootActions
     {
         void OnMovement(InputAction.CallbackContext context);
+        void OnLook(InputAction.CallbackContext context);
     }
 }

@@ -6,17 +6,17 @@ public class InputManager : MonoBehaviour
 {
     private InputPlayer inputPlayer;
     private InputPlayer.OnFootActions onFoot;
-    private PlayerMovements playerMovements;
+    private PlayerCam _playerCam;
     private void Awake()
     {
         inputPlayer = new InputPlayer();
         onFoot = inputPlayer.OnFoot;
-        playerMovements = GetComponent<PlayerMovements>();
+        _playerCam = GetComponent<PlayerCam>();
     }
 
     private void Update()
     {
-        playerMovements.MovePlayer(onFoot.Movement.ReadValue<Vector2>());
+        //_playerCam.MovePlayer(onFoot.Movement.ReadValue<Vector2>());
     }
 
     private void OnEnable()
