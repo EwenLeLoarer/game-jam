@@ -3,14 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GripScript : MonoBehaviour
+public class Slime : Entity
 {
+
+
     // Start is called before the first frame update
-    public ThirdPersonController PlayerScript;
-    public bool canGrip;
     void Start()
     {
-        
+        MaxHP = 5;
+        ActualHP = MaxHP;
     }
 
     // Update is called once per frame
@@ -19,13 +20,5 @@ public class GripScript : MonoBehaviour
         
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Grip"))
-        {
-
-        }
-    }
-
-
+    
 }
