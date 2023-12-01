@@ -1,4 +1,5 @@
-﻿ using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 #if ENABLE_INPUT_SYSTEM 
 using UnityEngine.InputSystem;
 #endif
@@ -75,6 +76,8 @@ namespace StarterAssets
         [Tooltip("For locking the camera position on all axis")]
         public bool LockCameraPosition = false;
 
+        [SerializeField]
+        private GameObject _swordCollider;
         
         // cinemachine
         private float _cinemachineTargetYaw;
@@ -150,12 +153,14 @@ namespace StarterAssets
 #endif
 
             AssignAnimationIDs();
+            Debug.Log(_animIDGrounded);
 
             // reset our timeouts on start
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
             MaxHP = 10;
             ActualHP = 10;
+            _swordCollider.SetActive(false);
         }
 
         private void Update()
@@ -348,7 +353,6 @@ namespace StarterAssets
 
                 // if we are not grounded, do not jump
                 _input.jump = false;
-                Debug.Log("jump = false");
             }
 
             // apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
@@ -397,6 +401,20 @@ namespace StarterAssets
             {
                 AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
             }
+        }
+
+        public void StartSwordAttack()
+        {
+            StartCoroutine(SwordAttack());
+        }
+        private IEnumerator SwordAttack()
+        {
+            yield return new WaitForSeconds(0.5f);
+            _swordCollider.SetActive(true);
+        }
+        public void StopSwordAttack()
+        {
+            _swordCollider.SetActive(false);
         }
     }
 }

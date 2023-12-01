@@ -17,11 +17,12 @@ public class SlimeAttack : MonoBehaviour
         
     }
 
-    public void OnTriggerEnter(Collider other)
+    public void OnTriggerEnter(Collider collision)
     {
-        if (other.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player"))
         {
-            var player = other.gameObject.GetComponent<ThirdPersonController>();
+            
+            var player = collision.gameObject.GetComponent<ThirdPersonController>();
             player.ActualHP--;
             player.HealthBar.UpdateHealthBar(player.MaxHP, player.ActualHP);
         }

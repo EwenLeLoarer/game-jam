@@ -8,6 +8,7 @@ TagManager:
   - Grip
   - collect
   - Collectable
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -15,8 +16,8 @@ TagManager:
   - Map
   - Water
   - UI
-  - player
-  - 
+  - Entity
+  - collectebable
   - 
   - 
   - 
