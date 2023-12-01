@@ -90,7 +90,7 @@ namespace StarterAssets
         private float _rotationVelocity;
         private float _verticalVelocity;
         private float _terminalVelocity = 53.0f;
-
+        private bool _hasJump = false;
         
 
         // timeout deltatime
@@ -103,6 +103,7 @@ namespace StarterAssets
         private int _animIDJump;
         private int _animIDFreeFall;
         private int _animIDMotionSpeed;
+        private int _animIDAttack;
 
 
 #if ENABLE_INPUT_SYSTEM 
@@ -116,7 +117,7 @@ namespace StarterAssets
         private const float _threshold = 0.01f;
 
         private bool _hasAnimator;
-
+        
         private bool IsCurrentDeviceMouse
         {
             get
@@ -169,6 +170,7 @@ namespace StarterAssets
 
             JumpAndGravity();
             GroundedCheck();
+            StartSwordAttack();
             Move();
         }
 
@@ -184,6 +186,7 @@ namespace StarterAssets
             _animIDJump = Animator.StringToHash("Jump");
             _animIDFreeFall = Animator.StringToHash("FreeFall");
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
+            _animIDAttack = Animator.StringToHash("Attack");
         }
 
         private void GroundedCheck()
@@ -302,8 +305,6 @@ namespace StarterAssets
                 {
                     _animator.SetBool(_animIDJump, false);
                     _animator.SetBool(_animIDFreeFall, false);
-                    
-
                 }
 
                 // stop our velocity dropping infinitely when grounded
@@ -322,6 +323,7 @@ namespace StarterAssets
                     if (_hasAnimator)
                     {
                         _animator.SetBool(_animIDJump, true);
+                        
                         
                     }
                 }
@@ -405,12 +407,24 @@ namespace StarterAssets
 
         public void StartSwordAttack()
         {
-            StartCoroutine(SwordAttack());
+            if (!Grounded) return;
+            if(_hasAnimator)
+            {
+                if (Input.GetMouseButtonDown(0))
+                {
+                    _animator.SetTrigger("Attack");
+                    StartCoroutine(SwordAttack());
+
+                }
+            }
+            
+            
         }
         private IEnumerator SwordAttack()
         {
             yield return new WaitForSeconds(0.5f);
             _swordCollider.SetActive(true);
+            _animator.ResetTrigger("Attack");
         }
         public void StopSwordAttack()
         {
