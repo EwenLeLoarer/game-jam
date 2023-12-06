@@ -1,10 +1,13 @@
+using StarterAssets;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Entity : MonoBehaviour
 {
+    public GameObject Ragdoll = null;
     public int MaxHP;
     public int ActualHP
     {
@@ -22,7 +25,27 @@ public class Entity : MonoBehaviour
     [SerializeField] public HealthBar HealthBar;
     private void Die()
     {
-       Destroy(this.gameObject);
+        if (this.gameObject.CompareTag("Player"))
+        {
+            this.gameObject.GetComponent<Animator>().enabled = false;
+            this.gameObject.GetComponent<CharacterController>().enabled = false;
+            this.gameObject.GetComponent<PlayerInput>().enabled = false;
+            this.gameObject.GetComponent<ThirdPersonController>().enabled = false;
+            Collider[] RagdollCollider = Ragdoll.GetComponentsInChildren<Collider>();
+            Rigidbody[] RagdollRigidBody = Ragdoll.GetComponentsInChildren<Rigidbody>();
+            foreach (Collider c in RagdollCollider)
+            {
+                c.enabled = true;
+            }
+            foreach (Rigidbody r in RagdollRigidBody)
+            {
+                r.isKinematic = false;
+            }
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
     }
 
     [SerializeField]
@@ -30,6 +53,7 @@ public class Entity : MonoBehaviour
     void Start()
     {
         HealthBar.UpdateHealthBar(MaxHP, _actualHP);
+
     }
 
     // Update is called once per frame

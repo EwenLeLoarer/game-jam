@@ -49,7 +49,9 @@ namespace StarterAssets
 			{
                 _player.Jump();
 				nbrJump++;
-            }				
+            }
+			
+				
 		}
 
 		public void OnSprint(InputValue value)

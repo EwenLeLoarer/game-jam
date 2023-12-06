@@ -113,7 +113,7 @@ namespace StarterAssets
         private CharacterController _controller;
         private StarterAssetsInputs _input;
         private GameObject _mainCamera;
-
+        
         private const float _threshold = 0.01f;
 
         private bool _hasAnimator;
@@ -137,6 +137,16 @@ namespace StarterAssets
             if (_mainCamera == null)
             {
                 _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+            }
+            Collider[] RagdollCollider = Ragdoll.GetComponentsInChildren<Collider>();
+            Rigidbody[] RagdollRigidBody = Ragdoll.GetComponentsInChildren<Rigidbody>();
+            foreach (Collider c in RagdollCollider)
+            {
+                c.enabled = false;
+            }
+            foreach (Rigidbody r in RagdollRigidBody)
+            {
+                r.isKinematic = true;
             }
         }
 
@@ -167,11 +177,13 @@ namespace StarterAssets
         private void Update()
         {
             _hasAnimator = TryGetComponent(out _animator);
+
+                JumpAndGravity();
+                GroundedCheck();
+                StartSwordAttack();
+                Move();
             
-            JumpAndGravity();
-            GroundedCheck();
-            StartSwordAttack();
-            Move();
+            
         }
 
         private void LateUpdate()
