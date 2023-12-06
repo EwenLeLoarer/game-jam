@@ -8,11 +8,14 @@ namespace StarterAssets
 	public class StarterAssetsInputs : MonoBehaviour
 	{
 		[Header("Character Input Values")]
+		[SerializeField] ThirdPersonController _player;
 		public Vector2 move;
 		public Vector2 look;
 		public bool jump;
+		public bool jumpHasBeenRelease;
 		public bool sprint;
 		public bool attack;
+		public int nbrJump;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -37,7 +40,16 @@ namespace StarterAssets
 
 		public void OnJump(InputValue value)
 		{
+			if(_player.Grounded)
+			{
+				nbrJump = 0;
+			}
 			JumpInput(value.isPressed);
+			if(nbrJump ==  0 || nbrJump == 1)
+			{
+                _player.Jump();
+				nbrJump++;
+            }				
 		}
 
 		public void OnSprint(InputValue value)

@@ -35,14 +35,14 @@ namespace StarterAssets
 
         [Space(10)]
         [Tooltip("The height the player can jump")]
-        public float JumpHeight = 1.2f;
+        public float JumpHeight = 1.5f;
 
         [Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
         public float Gravity = -15.0f;
 
         [Space(10)]
         [Tooltip("Time required to pass before being able to jump again. Set to 0f to instantly jump again")]
-        public float JumpTimeout = 0.50f;
+        public float JumpTimeout = 0.10f;
 
         [Tooltip("Time required to pass before entering the fall state. Useful for walking down stairs")]
         public float FallTimeout = 0.15f;
@@ -90,7 +90,7 @@ namespace StarterAssets
         private float _rotationVelocity;
         private float _verticalVelocity;
         private float _terminalVelocity = 53.0f;
-        private bool _hasJump = false;
+        private int _jumpTotal = 0;
         
 
         // timeout deltatime
@@ -101,10 +101,10 @@ namespace StarterAssets
         private int _animIDSpeed;
         private int _animIDGrounded;
         private int _animIDJump;
+        private int _animIDDoubleJump;
         private int _animIDFreeFall;
         private int _animIDMotionSpeed;
         private int _animIDAttack;
-
 
 #if ENABLE_INPUT_SYSTEM 
         private PlayerInput _playerInput;
@@ -154,11 +154,11 @@ namespace StarterAssets
 #endif
 
             AssignAnimationIDs();
-            Debug.Log(_animIDGrounded);
 
             // reset our timeouts on start
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
+            
             MaxHP = 10;
             ActualHP = 10;
             _swordCollider.SetActive(false);
@@ -167,7 +167,7 @@ namespace StarterAssets
         private void Update()
         {
             _hasAnimator = TryGetComponent(out _animator);
-
+            
             JumpAndGravity();
             GroundedCheck();
             StartSwordAttack();
@@ -184,6 +184,7 @@ namespace StarterAssets
             _animIDSpeed = Animator.StringToHash("Speed");
             _animIDGrounded = Animator.StringToHash("Grounded");
             _animIDJump = Animator.StringToHash("Jump");
+            _animIDDoubleJump = Animator.StringToHash("DoubleJump");
             _animIDFreeFall = Animator.StringToHash("FreeFall");
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
             _animIDAttack = Animator.StringToHash("Attack");
@@ -225,7 +226,7 @@ namespace StarterAssets
                 _cinemachineTargetYaw, 0.0f);
         }
 
-        private void Move()
+        public void Move()
         {
             // set target speed based on move speed, sprint speed and if sprint is pressed
             float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
@@ -304,7 +305,10 @@ namespace StarterAssets
                 if (_hasAnimator)
                 {
                     _animator.SetBool(_animIDJump, false);
+                    _animator.SetBool(_animIDDoubleJump, false);
                     _animator.SetBool(_animIDFreeFall, false);
+
+
                 }
 
                 // stop our velocity dropping infinitely when grounded
@@ -312,30 +316,12 @@ namespace StarterAssets
                 {
                     _verticalVelocity = -2f;
                 }
-
-                // Jump
-                if (_input.jump && _jumpTimeoutDelta <= 0.0f)
-                {
-                    // the square root of H * -2 * G = how much velocity needed to reach desired height
-                    _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
-
-                    // update animator if using character
-                    if (_hasAnimator)
-                    {
-                        _animator.SetBool(_animIDJump, true);
-                        
-                        
-                    }
-                }
-
-                // jump timeout
-                if (_jumpTimeoutDelta >= 0.0f)
-                {
-                    _jumpTimeoutDelta -= Time.deltaTime;
-                }
             }
+            
             else
             {
+
+
                 // reset the jump timeout timer
                 _jumpTimeoutDelta = JumpTimeout;
 
@@ -354,7 +340,7 @@ namespace StarterAssets
                 }
 
                 // if we are not grounded, do not jump
-                _input.jump = false;
+                // _input.jump = false;
             }
 
             // apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
@@ -363,7 +349,20 @@ namespace StarterAssets
                 _verticalVelocity += Gravity * Time.deltaTime;
             }
         }
+        public void Jump()
+        {
+            _fallTimeoutDelta = FallTimeout;
+            // the square root of H * -2 * G = how much velocity needed to reach desired height
+            _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
 
+            // update animator if using character
+            if (_hasAnimator)
+            {
+                _animator.SetBool(_animIDJump, true);
+                _animator.SetBool(_animIDDoubleJump, true);
+                _animator.SetBool(_animIDFreeFall, false);
+            }
+        }
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
         {
             if (lfAngle < -360f) lfAngle += 360f;
@@ -429,6 +428,11 @@ namespace StarterAssets
         public void StopSwordAttack()
         {
             _swordCollider.SetActive(false);
+        }
+
+        public void debugMessage()
+        {
+            Debug.Log("action");
         }
     }
 }
