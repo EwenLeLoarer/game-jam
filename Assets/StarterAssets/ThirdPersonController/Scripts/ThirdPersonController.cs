@@ -29,8 +29,11 @@ namespace StarterAssets
         [Tooltip("Acceleration and deceleration")]
         public float SpeedChangeRate = 10.0f;
 
-        public AudioClip LandingAudioClip;
+        private AudioSource _audioSource;
+
+        public AudioClip LandingAudioClip,combatClip, ExplorationClip, damageClip, lootClip, jumpClip;
         public AudioClip[] FootstepAudioClips;
+
         [Range(0, 1)] public float FootstepAudioVolume = 0.5f;
 
         [Space(10)]
@@ -157,6 +160,7 @@ namespace StarterAssets
             _hasAnimator = TryGetComponent(out _animator);
             _controller = GetComponent<CharacterController>();
             _input = GetComponent<StarterAssetsInputs>();
+            _audioSource = GetComponent<AudioSource>();
 #if ENABLE_INPUT_SYSTEM 
             _playerInput = GetComponent<PlayerInput>();
 #else
@@ -172,6 +176,7 @@ namespace StarterAssets
             MaxHP = 10;
             ActualHP = 10;
             _swordCollider.SetActive(false);
+            PlayMusic(ExplorationClip);
         }
 
         private void Update()
@@ -363,6 +368,7 @@ namespace StarterAssets
         }
         public void Jump()
         {
+            AudioSource.PlayClipAtPoint(jumpClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
             _fallTimeoutDelta = FallTimeout;
             // the square root of H * -2 * G = how much velocity needed to reach desired height
             _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
@@ -408,12 +414,33 @@ namespace StarterAssets
             }
         }
 
+        
+
         private void OnLand(AnimationEvent animationEvent)
         {
             if (animationEvent.animatorClipInfo.weight > 0.5f)
             {
                 AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
             }
+        }
+
+        public void PlayDamageSound()
+        {
+            AudioSource.PlayClipAtPoint(damageClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
+        }
+        public void PlayLootSound()
+        {
+            AudioSource.PlayClipAtPoint(lootClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
+        }
+
+        public void PlayMusic(AudioClip music)
+        {
+            if(_audioSource.isPlaying)
+            {
+                _audioSource.Stop();
+            }
+            _audioSource.clip = music;
+            _audioSource.Play();
         }
 
         public void StartSwordAttack()
@@ -435,6 +462,7 @@ namespace StarterAssets
         {
             yield return new WaitForSeconds(0.5f);
             _swordCollider.SetActive(true);
+            _swordCollider.GetComponent<Collider>().enabled = true;
             _animator.ResetTrigger("Attack");
         }
         public void StopSwordAttack()

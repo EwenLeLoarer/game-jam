@@ -1,3 +1,4 @@
+using StarterAssets;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,6 +24,11 @@ public class ItemCollect : MonoBehaviour
         if (!collision.gameObject.CompareTag("collect"))
             return;
         _isCollecting = true;
+        if (collision.CompareTag("Player"))
+        {
+            collision.GetComponent<ThirdPersonController>().PlayLootSound();
+        }
+        
     }
 
     private void OnTriggerExit(Collider collision)

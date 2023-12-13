@@ -1,3 +1,4 @@
+using StarterAssets;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,6 +23,8 @@ public class SlimeFollow : MonoBehaviour
         if (!collision.gameObject.CompareTag("Player"))
             return;
         _isCharging = true;
+        var player = collision.gameObject.GetComponent<ThirdPersonController>();
+        player.PlayMusic(player.combatClip);
     }
 
     private void OnTriggerExit(Collider collision)
@@ -29,6 +32,8 @@ public class SlimeFollow : MonoBehaviour
         if (!collision.gameObject.CompareTag("Player"))
             return;
         _isCharging = false;
+        var player = collision.gameObject.GetComponent<ThirdPersonController>();
+        player.PlayMusic(player.ExplorationClip);
     }
 
     private void OnTriggerStay(Collider collision)

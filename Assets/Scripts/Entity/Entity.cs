@@ -18,7 +18,10 @@ public class Entity : MonoBehaviour
             {
                 _actualHP = value;
             }
-            else { Die(); }
+            else {
+                Die();
+
+            }
         }
     }
 

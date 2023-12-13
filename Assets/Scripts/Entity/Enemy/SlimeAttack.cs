@@ -24,6 +24,7 @@ public class SlimeAttack : MonoBehaviour
             
             var player = collision.gameObject.GetComponent<ThirdPersonController>();
             player.ActualHP--;
+            player.PlayDamageSound();
             player.HealthBar.UpdateHealthBar(player.MaxHP, player.ActualHP);
         }
     }
