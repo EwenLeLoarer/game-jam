@@ -120,7 +120,9 @@ namespace StarterAssets
         private const float _threshold = 0.01f;
 
         private bool _hasAnimator;
-        
+
+        public GameObject inventoryUI;
+        public GameObject menuUI;
         private bool IsCurrentDeviceMouse
         {
             get
@@ -470,9 +472,13 @@ namespace StarterAssets
             _swordCollider.SetActive(false);
         }
 
-        public void debugMessage()
+        public void StartOptionMenu()
         {
-            Debug.Log("action");
+            if (_input.option)
+            {
+                inventoryUI.SetActive(false);
+                menuUI.SetActive(true);
+            }
         }
     }
 }

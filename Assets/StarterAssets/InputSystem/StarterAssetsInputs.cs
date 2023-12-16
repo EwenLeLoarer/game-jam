@@ -15,6 +15,7 @@ namespace StarterAssets
 		public bool jumpHasBeenRelease;
 		public bool sprint;
 		public bool attack;
+		public bool option;
 		public int nbrJump;
 
 		[Header("Movement Settings")]
@@ -48,10 +49,9 @@ namespace StarterAssets
 			if(nbrJump ==  0 || nbrJump == 1)
 			{
                 _player.Jump();
+				
 				nbrJump++;
             }
-			
-				
 		}
 
 		public void OnSprint(InputValue value)
@@ -62,6 +62,11 @@ namespace StarterAssets
 		public void OnAttack(InputValue value)
 		{
 			AttackInput(value.isPressed);
+		}
+
+		public void OnOption(InputValue value)
+		{
+			OptionInput(value.isPressed);
 		}
 
 		public void MoveInput(Vector2 newMoveDirection)
@@ -87,6 +92,11 @@ namespace StarterAssets
 		public void AttackInput(bool newAttackState)
 		{
 			attack = newAttackState;
+		}
+
+		public void OptionInput(bool newOptionState)
+		{
+			option = newOptionState;
 		}
 
 		private void OnApplicationFocus(bool hasFocus)
